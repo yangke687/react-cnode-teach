@@ -32,6 +32,8 @@ module.exports = {
   },
 
   plugins: [
-    new htmlWebpackPlugin()
+    new htmlWebpackPlugin({
+      template: path.join(__dirname, '../client/template.html')
+    })
   ]
 }
