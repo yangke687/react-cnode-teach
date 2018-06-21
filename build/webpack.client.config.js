@@ -1,5 +1,6 @@
 const path = require('path')
 const htmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
 
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -11,7 +12,7 @@ const config = {
   output: {
     filename: '[name].[hash:5].js',
     path: path.join(__dirname, '../dist'),
-    publicPath: '/public'
+    publicPath: '/public/' /** last slash -> Fix HMR bug*/
   },
 
   resolve: {
@@ -45,7 +46,7 @@ if (isDev) {
     host: '0.0.0.0',
     port: 8888,
     contentBase: path.join(__dirname, '../dist'),
-    //hot: true,
+    hot: true,
     overlay: {
       errors: true,
     },
@@ -53,6 +54,13 @@ if (isDev) {
     historyApiFallback: {
       index: '/public/index.html'
     }
+  }
+  config.plugins.push(new webpack.HotModuleReplacementPlugin())
+  config.entry = {
+    app: [
+      'react-hot-loader/patch',
+      path.join(__dirname, '../client/app.js'),
+    ]
   }
 }
 
