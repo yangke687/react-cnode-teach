@@ -1,0 +1,13 @@
+{
+  "restartable": "rc",
+  "verbose": true,
+  "ignore": [
+    "client",
+    "node_modules/**/node_modules",
+    "build"
+  ],
+  "ext": "js",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
