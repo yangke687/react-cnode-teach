@@ -1,3 +1,6 @@
 {
-  "extends": "standard"
+  "extends": "standard",
+  "rules": {
+    "handle-callback-err": "off"
+  }
 }

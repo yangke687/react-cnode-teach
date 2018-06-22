@@ -17,7 +17,7 @@ const getTemplate = () => new Promise((resolve, reject) => {
 /** build bundle.js */
 const webpackServerConfig = require('../../build/webpack.server.config')
 const serverCompiler = webpack(webpackServerConfig)
-const mfs = new MemoryFs
+const mfs = new MemoryFs()
 /** compile bundle.js in memory */
 let bundleJs
 serverCompiler.outputFileSystem = mfs
@@ -32,11 +32,10 @@ serverCompiler.watch({
   const bundleJsStr = mfs.readFileSync(bundlePath, 'utf-8')
   /** next transform bundle.js string to bundle.js module */
   const Module = module.constructor
-  const m = new Module
+  const m = new Module()
   m._compile(bundleJsStr, 'server-entry.js')
   bundleJs = m.exports.default
 })
-
 
 module.exports = (app) => {
   app.use('/public', proxy({
