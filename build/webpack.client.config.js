@@ -22,6 +22,12 @@ const config = {
   module: {
     rules: [
       {
+        enforce: 'pre',
+        test: /\.(js|jsx)$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
