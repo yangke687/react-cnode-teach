@@ -1,43 +1,22 @@
 const path = require('path')
 const htmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
+const webpackMerge = require('webpack-merge')
+const baseConfig = require('./webpack.base.config')
 
 const isDev = process.env.NODE_ENV === 'development'
 
-const config = {
+const config = webpackMerge(baseConfig, {
   entry: {
     app: path.join(__dirname, '../client/app.js',)
   },
 
   output: {
     filename: '[name].[hash:5].js',
-    path: path.join(__dirname, '../dist'),
-    publicPath: '/public/' /** last slash -> Fix HMR bug*/
   },
 
   resolve: {
     extensions: ['.js', '.jsx'],
-  },
-
-  module: {
-    rules: [
-      {
-        enforce: 'pre',
-        test: /\.(js|jsx)$/,
-        loader: 'eslint-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['es2015', 'react']
-          }
-        }
-      }
-    ]
   },
 
   plugins: [
@@ -45,7 +24,7 @@ const config = {
       template: path.join(__dirname, '../client/template.html')
     })
   ]
-}
+})
 
 if (isDev) {
   config.devServer = {
@@ -54,7 +33,7 @@ if (isDev) {
     contentBase: path.join(__dirname, '../dist'),
     hot: true,
     overlay: {
-      errors: true,
+      errors: true
     },
     publicPath: '/public',
     historyApiFallback: {
