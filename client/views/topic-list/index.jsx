@@ -1,15 +1,35 @@
 import React, { Component } from 'react'
+import { inject, observer } from 'mobx-react'
+import PropTypes from 'prop-types'
+import { AppState } from '../../store/app-state'
 
+@inject('appState') @observer
 export default class TopicList extends Component {
+  constructor(props) {
+    super(props)
+    this.changeName = this.changeName.bind(this)
+  }
+
   componentDidMount() {
 
   }
 
+  changeName(evt) {
+    const { appState } = this.props;
+    appState.changeName(evt.target.value)
+  }
+
   render() {
+    const { appState } = this.props
     return (
       <div>
-        Topic List
+        <input onChange={this.changeName} />
+        {appState.msg}
       </div>
     )
   }
+}
+
+TopicList.propTypes = {
+  appState: PropTypes.instanceOf(AppState),
 }
