@@ -1,1 +1,1 @@
-module.exports = 'http://cnodejs.org/api/v1'
+module.exports = 'https://cnodejs.org/api/v1'

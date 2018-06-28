@@ -23,7 +23,7 @@ app.use(session({
 app.use(favicon(path.join(__dirname, '../favicon.ico')))
 
 /** user login proxy */
-app.use('/api/user', require('./utils/handleLogin'))
+app.use('/api/user', require('./utils/handle-login'))
 app.use('/api', require('./utils/proxy'))
 
 if (!isDev) {

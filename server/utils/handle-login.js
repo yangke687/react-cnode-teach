@@ -9,7 +9,7 @@ router.post('/login', function (req, res, next) {
   })
     .then(function (resp) {
       if (resp.status === 200 && resp.data.success) {
-        req.session.use = {
+        req.session.user = {
           accessToken: req.body.accessToken,
           loginName: resp.data.loginname,
           id: resp.data.id,
@@ -25,7 +25,7 @@ router.post('/login', function (req, res, next) {
       if (err.response) {
         res.json({
           success: false,
-          data: err.response
+          data: err.response.data
         })
       } else {
         next(err) // throw exceptions

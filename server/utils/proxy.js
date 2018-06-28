@@ -1,5 +1,6 @@
 const baseUrl = require('./baseUrl')
 const axios = require('axios')
+const queryStr = require('query-string')
 
 module.exports = function (req, res, next) {
   const path = req.path
@@ -14,17 +15,18 @@ module.exports = function (req, res, next) {
   }
 
   /** remove 'needAccessToken' from query string */
-  let query = Object.assign({}, req.query)
+  let query = Object.assign({}, req.query, {
+    accesstoken: needAccessToken && req.method === 'GET' ? user.accessToken : ''
+  })
   if (query.needAccessToken) delete query.needAccessToken
-
   axios(`${baseUrl}${path}`, {
     method: req.method,
     params: query,
-    data: Object.assign({}, req.body, {
-      accesstoken: user.accessToken
-    }),
+    data: queryStr.stringify(Object.assign({}, req.body, {
+      accesstoken: needAccessToken && req.method === 'POST' ? user.accessToken : ''
+    })),
     headers: {
-      'Content-Type': 'application/x-www-form-url-encode'
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
   })
     .then(function (resp) {
