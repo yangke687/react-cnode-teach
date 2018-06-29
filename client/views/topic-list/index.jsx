@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import PropTypes from 'prop-types'
-import { AppState } from '../../store/app-state'
+import AppState from '../../store/app-state'
 
 @inject('appState') @observer
 export default class TopicList extends Component {

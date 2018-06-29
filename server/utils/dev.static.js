@@ -19,11 +19,15 @@ const webpackServerConfig = require('../../build/webpack.server.config')
 const serverCompiler = webpack(webpackServerConfig)
 const mfs = new MemoryFs()
 /** compile bundle.js in memory */
-let bundleJs
+let bundleJs, createStoreMap
 serverCompiler.outputFileSystem = mfs
 serverCompiler.watch({
   /** configuration objects */
 }, (err, stats) => {
+  if (err) throw err
+  stats = stats.toJson()
+  stats.errors.forEach(err => console.log(err))
+
   const bundlePath = path.join(
     webpackServerConfig.output.path,
     webpackServerConfig.output.filename
@@ -35,16 +39,19 @@ serverCompiler.watch({
   const m = new Module()
   m._compile(bundleJsStr, 'server-entry.js')
   bundleJs = m.exports.default
+  createStoreMap = m.exports.createStoreMap
 })
 
 module.exports = (app) => {
   app.use('/public', proxy({
     target: 'http://localhost:8888'
   }))
-  const serverEntry = ReactDOMServer.renderToString(bundleJs)
   app.use('*', (req, res) => {
     getTemplate().then(template => {
-      res.send(template.replace('<!-- app -->', serverEntry))
+      const routerContext = {}
+      const serverEntry = bundleJs(createStoreMap(), routerContext, req.url)
+      const content = ReactDOMServer.renderToString(serverEntry)
+      res.send(template.replace('<!-- app -->', content))
     })
   })
 }
