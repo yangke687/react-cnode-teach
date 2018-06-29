@@ -4,10 +4,12 @@ const proxy = require('http-proxy-middleware')
 const MemoryFs = require('memory-fs')
 const webpack = require('webpack')
 const asyncBootstrapper = require('react-async-bootstrapper')
+const ejs = require('ejs')
+const serialize = require('serialize-javascript')
 const ReactDOMServer = require('react-dom/server')
 
 const getTemplate = () => new Promise((resolve, reject) => {
-  axios.get('http://localhost:8888/public/index.html')
+  axios.get('http://localhost:8888/public/server.template.ejs')
     .then(res => {
       resolve(res.data)
     })
@@ -71,11 +73,15 @@ module.exports = (app) => {
           res.end()
           return
         }
-        // console.log(stores.appState.name)
+
         const storeState = getStoreState(stores)
-        console.log(storeState)
         const content = ReactDOMServer.renderToString(serverEntry)
-        res.send(template.replace('<!-- app -->', content))
+        const html = ejs.render(template, {
+          appString: content,
+          initialState: serialize(storeState)
+        })
+        res.send(html)
+        // res.send(template.replace('<!-- app -->', content))
       })
     }).catch(next)
   })

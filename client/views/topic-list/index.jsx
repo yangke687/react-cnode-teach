@@ -19,8 +19,9 @@ export default class TopicList extends Component {
       setTimeout(() => {
         const { appState } = this.props
         appState.changeName('Jokey')
+        appState.add()
         resolve(true)
-      }, 1000)
+      }, 5000)
     })
   }
 
