@@ -3,7 +3,7 @@ const path = require('path')
 const proxy = require('http-proxy-middleware')
 const MemoryFs = require('memory-fs')
 const webpack = require('webpack')
-
+const asyncBootstrapper = require('react-async-bootstrapper')
 const ReactDOMServer = require('react-dom/server')
 
 const getTemplate = () => new Promise((resolve, reject) => {
@@ -42,6 +42,13 @@ serverCompiler.watch({
   createStoreMap = m.exports.createStoreMap
 })
 
+const getStoreState = (stores) => {
+  return Object.keys(stores).reduce((results, storeName) => {
+    results[storeName] = stores[storeName].toJson()
+    return results
+  }, {})
+}
+
 module.exports = (app) => {
   app.use('/public', proxy({
     target: 'http://localhost:8888'
@@ -52,19 +59,24 @@ module.exports = (app) => {
     }
     getTemplate().then(template => {
       const routerContext = {}
-      const serverEntry = bundleJsFunc(createStoreMap(), routerContext, req.url)
+      const stores = createStoreMap()
+      const serverEntry = bundleJsFunc(stores, routerContext, req.url)
 
-      const content = ReactDOMServer.renderToString(serverEntry)
-      /** Redirect */
-      if (routerContext.url) {
-        console.log(routerContext.url)
-        res.writeHead(302, {
-          Location: routerContext.url
-        })
-        res.end()
-        return
-      }
-      res.send(template.replace('<!-- app -->', content))
+      asyncBootstrapper(serverEntry).then(() => {
+        /** Redirect */
+        if (routerContext.url) {
+          res.writeHead(302, {
+            Location: routerContext.url
+          })
+          res.end()
+          return
+        }
+        // console.log(stores.appState.name)
+        const storeState = getStoreState(stores)
+        console.log(storeState)
+        const content = ReactDOMServer.renderToString(serverEntry)
+        res.send(template.replace('<!-- app -->', content))
+      })
     }).catch(next)
   })
 }
