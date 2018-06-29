@@ -19,7 +19,7 @@ const webpackServerConfig = require('../../build/webpack.server.config')
 const serverCompiler = webpack(webpackServerConfig)
 const mfs = new MemoryFs()
 /** compile bundle.js in memory */
-let bundleJs, createStoreMap
+let bundleJsFunc, createStoreMap
 serverCompiler.outputFileSystem = mfs
 serverCompiler.watch({
   /** configuration objects */
@@ -38,7 +38,7 @@ serverCompiler.watch({
   const Module = module.constructor
   const m = new Module()
   m._compile(bundleJsStr, 'server-entry.js')
-  bundleJs = m.exports.default
+  bundleJsFunc = m.exports.default
   createStoreMap = m.exports.createStoreMap
 })
 
@@ -46,12 +46,25 @@ module.exports = (app) => {
   app.use('/public', proxy({
     target: 'http://localhost:8888'
   }))
-  app.use('*', (req, res) => {
+  app.get('*', (req, res, next) => {
+    if (!bundleJsFunc || !createStoreMap) {
+      res.send('waiting to compile, refresh later ')
+    }
     getTemplate().then(template => {
       const routerContext = {}
-      const serverEntry = bundleJs(createStoreMap(), routerContext, req.url)
+      const serverEntry = bundleJsFunc(createStoreMap(), routerContext, req.url)
+
       const content = ReactDOMServer.renderToString(serverEntry)
+      /** Redirect */
+      if (routerContext.url) {
+        console.log(routerContext.url)
+        res.writeHead(302, {
+          Location: routerContext.url
+        })
+        res.end()
+        return
+      }
       res.send(template.replace('<!-- app -->', content))
-    })
+    }).catch(next)
   })
 }

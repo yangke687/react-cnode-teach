@@ -8,11 +8,11 @@ import { createStoreMap } from './store/store'
 useStaticRendering(true)
 
 export default (stores, routerContext, url) => (
-  <StaticRouter context={routerContext} location={url}>
-    <Provider {...stores}>
+  <Provider {...stores}>
+    <StaticRouter context={routerContext} location={url}>
       <App />
-    </Provider>
-  </StaticRouter>
+    </StaticRouter>
+  </Provider>
 )
 
 export { createStoreMap }
