@@ -11,7 +11,7 @@ const app = express()
 const isDev = process.env.NODE_ENV === 'development'
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extend: false }))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(session({
   maxAge: 10 * 60 * 1000, // 10 minutes
   name: 'tid',
