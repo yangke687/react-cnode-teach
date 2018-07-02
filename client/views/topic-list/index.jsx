@@ -21,7 +21,7 @@ export default class TopicList extends Component {
         appState.changeName('Jokey')
         appState.add()
         resolve(true)
-      }, 5000)
+      }, 1000)
     })
   }
 

@@ -16,6 +16,17 @@ const getTemplate = () => new Promise((resolve, reject) => {
     .catch(reject)
 })
 
+const NativeModule = require('module')
+const vm = require('vm')
+const getModuleFromString = (bundle, filename) => {
+  const m = { exports: {} }
+  const wrapper = NativeModule.wrap(bundle)
+  const script = new vm.Script(wrapper, { filename })
+  const result = script.runInThisContext({ displayErrors: true })
+  result.call(m.exports, m.exports, require, m) // 'require' is in our current context, solve 'react is not found' error
+  return m
+}
+
 /** build bundle.js */
 const webpackServerConfig = require('../../build/webpack.server.config')
 const serverCompiler = webpack(webpackServerConfig)
@@ -37,9 +48,10 @@ serverCompiler.watch({
   /** read bundle.js string from memory */
   const bundleJsStr = mfs.readFileSync(bundlePath, 'utf-8')
   /** next transform bundle.js string to bundle.js module */
-  const Module = module.constructor
-  const m = new Module()
-  m._compile(bundleJsStr, 'server-entry.js')
+  // const Module = module.constructor
+  // const m = new Module()
+  // m._compile(bundleJsStr, 'server-entry.js')
+  const m = getModuleFromString(bundleJsStr, 'server-entry.js')
   bundleJsFunc = m.exports.default
   createStoreMap = m.exports.createStoreMap
 })
