@@ -9,6 +9,7 @@
     "build:client": "webpack --config build/webpack.client.config.js",
     "dev:client": "NODE_ENV=development webpack-dev-server --config build/webpack.client.config.js",
     "dev:server": "nodemon server/server.js",
+    "start": "NODE_ENV=production node server/server.js",
     "clear": "rimraf dist",
     "build": "npm run clear && npm run build:client && npm run  build:server",
     "lint": "eslint --ext .js --ext .jsx client/ server/",
