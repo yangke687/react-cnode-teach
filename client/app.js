@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component as ReactComponent } from 'react'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader' // eslint-disable-line
 import { BrowserRouter } from 'react-router-dom'
@@ -19,6 +19,23 @@ const theme = createMuiTheme({
   },
 })
 
+const createApp = (TheApp) => {
+  class Main extends ReactComponent {
+    // Remove the server-side injected CSS.
+    componentDidMount() {
+      const jssStyles = document.getElementById('jss-server-side');
+      if (jssStyles && jssStyles.parentNode) {
+        jssStyles.parentNode.removeChild(jssStyles);
+      }
+    }
+
+    render() {
+      return <TheApp />
+    }
+  }
+  return Main
+}
+
 const initState = window.__INITIAL__STATE__ ? window.__INITIAL__STATE__.appState : {}// eslint-disable-line
 
 const root = document.getElementById('root')
@@ -37,11 +54,11 @@ const render = (Component) => {
   )
 }
 
-render(App)
+render(createApp(App))
 
 if (module.hot) {
   module.hot.accept('./views/App', () => {
     const NextApp = require('./views/App').default // eslint-disable-line
-    render(NextApp)
+    render(createApp(NextApp))
   })
 }
