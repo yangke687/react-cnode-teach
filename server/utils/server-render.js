@@ -3,6 +3,12 @@ const ejs = require('ejs')
 const serialize = require('serialize-javascript')
 const ReactDOMServer = require('react-dom/server')
 const Helmet = require('react-helmet').default
+/** material jss */
+const createMuiTheme = require('@material-ui/core/styles').createMuiTheme
+const createGenerateClassName = require('@material-ui/core/styles').createGenerateClassName
+const SheetsRegistry = require('react-jss/lib/jss').SheetsRegistry
+const lightBlue = require('@material-ui/core/colors').lightBlue
+const pink = require('@material-ui/core/colors').pink
 
 const getStoreState = (stores) => {
   return Object.keys(stores).reduce((results, storeName) => {
@@ -17,7 +23,17 @@ module.exports = (bundle, template, req, res) => {
     const createStoreMap = bundle.createStoreMap
     const routerContext = {}
     const stores = createStoreMap()
-    const serverEntry = bundleJsFunc(stores, routerContext, req.url)
+    /* jss */
+    const generateClassName = createGenerateClassName()
+    const sheetsRegistry = new SheetsRegistry()
+    const theme = createMuiTheme({
+      palette: {
+        primary: lightBlue,
+        accent: pink,
+        type: 'light'
+      }
+    })
+    const serverEntry = bundleJsFunc(stores, routerContext, sheetsRegistry, generateClassName, theme, req.url)
 
     asyncBootstrapper(serverEntry).then(() => {
       /** Redirect */
@@ -38,7 +54,8 @@ module.exports = (bundle, template, req, res) => {
         meta: helmet.meta.toString(),
         title: helmet.title.toString(),
         style: helmet.style.toString(),
-        link: helmet.link.toString()
+        link: helmet.link.toString(),
+        materialCss: sheetsRegistry.toString()
       })
       res.send(html)
       resolve()
