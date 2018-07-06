@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import Button from '@material-ui/core/Button'
 import AppState from '../../store/app-state'
+import Container from '../components/container'
 
 @inject('appState') @observer
 export default class TopicList extends Component {
@@ -35,7 +36,7 @@ export default class TopicList extends Component {
   render() {
     const { appState } = this.props
     return (
-      <div>
+      <Container>
         <Helmet>
           <title>
             Topics List Page
@@ -47,7 +48,7 @@ export default class TopicList extends Component {
         </Button>
         <input onChange={this.changeName} />
         {appState.msg}
-      </div>
+      </Container>
     )
   }
 }
