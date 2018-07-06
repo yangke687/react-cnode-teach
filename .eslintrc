@@ -1,6 +1,7 @@
 {
   "extends": "standard",
   "rules": {
-    "handle-callback-err": "off"
+    "handle-callback-err": "off",
+    "react/forbid-prop-types": "off"
   }
 }

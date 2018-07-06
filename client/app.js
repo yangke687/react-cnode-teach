@@ -13,8 +13,8 @@ import AppState from './store/app-state'
 /** mui custom theme */
 const theme = createMuiTheme({
   palette: {
-    primary: lightBlue,
-    accent: pink,
+    primary: pink,
+    secondary: lightBlue,
     type: 'light',
   },
 })

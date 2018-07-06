@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import Routes from '../config/router'
+import ButtonAppBar from './components/app-bar'
 
 export default class App extends Component {
   componentDidMount() {
@@ -10,12 +10,7 @@ export default class App extends Component {
   render() {
     return [
       <div key="main">
-        <Link to="/">
-          首页
-        </Link>
-        <Link to="/detail/1">
-          详情页
-        </Link>
+        <ButtonAppBar />
       </div>,
       <Routes key="routes" />,
     ]
