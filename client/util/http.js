@@ -1,17 +1,20 @@
 import axios from 'axios'
 
-const baseUrl = process.env.API_BASE || ''
+const baseUrl = process.env.API_BASE || '';
+/** 1. server side load 'http://127.0.0.1:3333/api/...'
+ *  2. client side load 'http://localhost:8888/api/...'
+ * */
 
 const parseUrl = (url, params) => {
-  const str = Object.keys(params).reduce(((result, key) => {
+  const str = Object.keys(params).reduce((result, key) => {
     result += `${key}=${params[key]}&` // eslint-disable-line
     return result
-  }, ''))
-  return `${baseUrl}/${url}?${str.substr(0, str.length - 1)}`
+  }, '')
+  return `${url}?${str.substr(0, str.length - 1)}`
 }
 
 export const get = (url, params) => new Promise((resolve, reject) => {
-  axios(parseUrl(url, params))
+  axios(parseUrl(`${baseUrl}/api${url}`, params))
     .then((res) => {
       const { data } = res
       if (data && data.success) {
