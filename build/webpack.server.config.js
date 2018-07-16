@@ -1,6 +1,7 @@
 const webpackMerge = require('webpack-merge')
 const baseConfig = require('./webpack.base.config')
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = webpackMerge(baseConfig, {
   target: 'node',
@@ -15,6 +16,11 @@ module.exports = webpackMerge(baseConfig, {
 
   resolve: {
     extensions: ['.js', '.jsx'],
-  }
+  },
 
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.API_BASE': '"http://127.0.0.1:3333"'
+    })
+  ]
 })
