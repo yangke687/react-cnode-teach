@@ -9,6 +9,7 @@ import { lightBlue, pink } from '@material-ui/core/colors'
 import App from './views/App'
 /** mobx */
 import AppState from './store/app-state'
+import TopicStore from './store/topic'
 
 /** mui custom theme */
 const theme = createMuiTheme({
@@ -37,12 +38,14 @@ const createApp = (TheApp) => {
 }
 
 const initState = window.__INITIAL__STATE__ ? window.__INITIAL__STATE__.appState : {}// eslint-disable-line
+const appState = new AppState(initState.appState)
+const topicStore = new TopicStore(initState.topicStore)
 
 const root = document.getElementById('root')
 const render = (Component) => {
   ReactDOM.hydrate(
     <AppContainer>
-      <Provider appState={new AppState(initState)}>
+      <Provider appState={appState} topicStore={topicStore}>
         <BrowserRouter>
           <MuiThemeProvider theme={theme}>
             <Component />

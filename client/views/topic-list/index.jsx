@@ -6,6 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 // import Button from '@material-ui/core/Button'
 import AppState from '../../store/app-state'
+import TopicStore from '../../store/topic'
 import Container from '../components/container'
 import ListItem from './list-item'
 
@@ -18,7 +19,10 @@ const topic = {
   create_at: '1小时前',
   avatar: 'https://avatars0.githubusercontent.com/u/4279697?v=4&s=120',
 }
-@inject('appState') @observer
+@inject(stores => ({
+  appState: stores.appState,
+  topicStore: stores.topicStore,
+})) @observer
 export default class TopicList extends Component {
   constructor(props) {
     super(props)
@@ -29,7 +33,8 @@ export default class TopicList extends Component {
   }
 
   componentDidMount() {
-
+    const { topicStore } = this.props
+    topicStore.fetchTopics()
   }
 
   changeTabIdx(evt, idx) {
@@ -50,8 +55,10 @@ export default class TopicList extends Component {
   }
 
   render() {
-    const { appState } = this.props
+    const { appState, topicStore } = this.props
     const { tabIdx } = this.state
+    const { loading, topics } = topicStore
+    console.log('here:', loading, topics) // eslint-disable-line
     return (
       <Container>
         <Helmet>
@@ -75,6 +82,7 @@ export default class TopicList extends Component {
   }
 }
 
-TopicList.propTypes = {
+TopicList.wrappedComponent.propTypes = {
   appState: PropTypes.instanceOf(AppState),
+  topicStore: PropTypes.instanceOf(TopicStore),
 }
