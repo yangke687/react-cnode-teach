@@ -4,21 +4,14 @@ import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import List from '@material-ui/core/List';
+import CircularProgress from '@material-ui/core/CircularProgress';
 // import Button from '@material-ui/core/Button'
 import AppState from '../../store/app-state'
 import TopicStore from '../../store/topic'
 import Container from '../components/container'
 import ListItem from './list-item'
 
-const topic = {
-  title: '前端想转后端, 如何进行下去?',
-  username: '薰衣草',
-  tab: '问答',
-  reply_count: 20,
-  visit_count: 30,
-  create_at: '1小时前',
-  avatar: 'https://avatars0.githubusercontent.com/u/4279697?v=4&s=120',
-}
 @inject(stores => ({
   appState: stores.appState,
   topicStore: stores.topicStore,
@@ -58,7 +51,6 @@ export default class TopicList extends Component {
     const { appState, topicStore } = this.props
     const { tabIdx } = this.state
     const { loading, topics } = topicStore
-    console.log('here:', loading, topics) // eslint-disable-line
     return (
       <Container>
         <Helmet>
@@ -75,7 +67,14 @@ export default class TopicList extends Component {
           <Tab label="招聘" />
           <Tab label="客户端测试" />
         </Tabs>
-        <ListItem onClick={() => null} topic={topic} />
+        <List>
+          {topics.map(t => <ListItem onClick={() => null} topic={t} key={t.id} />)}
+        </List>
+        { loading ? (
+          <div>
+            <CircularProgress color="primary" size={100} />
+          </div>
+        ) : null}
         {appState.msg}
       </Container>
     )
