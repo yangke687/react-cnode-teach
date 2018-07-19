@@ -31,11 +31,12 @@ class TopicStore {
     this.topics.push(new Topic(createTopic(topic)))
   }
 
-  @action fetchTopics = () => {
+  @action fetchTopics = (tab) => {
     this.loading = true;
     this.topics = [];
     get('/topics', {
       mdrender: false, /** disable mark-down data format */
+      tab: tab, // eslint-disable-line
     }).then((res) => {
       if (res.success) {
         res.data.forEach(topic => this.pushTopic(topic))
