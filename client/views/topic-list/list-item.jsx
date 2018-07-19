@@ -5,18 +5,26 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Avatar from '@material-ui/core/Avatar'
 import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
 import { topicPrimaryStyle, topicSecondaryStyle } from './styles'
+import { tabs } from '../../util/variable-define'
 
-const Primary = ({ classes, topic }) => (
-  <div className={classes.root}>
-    <span className={classes.tab}>
-      {topic.tab}
-    </span>
-    <span className={classes.title}>
-      {topic.title}
-    </span>
-  </div>
-)
+const Primary = ({ classes, topic }) => {
+  const tabClasses = classNames({
+    [classes.tab]: true,
+    [classes.top]: topic.top,
+  })
+  return (
+    <div className={classes.root}>
+      <span className={tabClasses}>
+        {topic.top ? '置顶' : tabs[topic.tab]}
+      </span>
+      <span className={classes.title}>
+        {topic.title}
+      </span>
+    </div>
+  )
+}
 
 const StyledPrimary = withStyles(topicPrimaryStyle)(Primary)
 

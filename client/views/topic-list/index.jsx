@@ -92,7 +92,7 @@ export default class TopicList extends Component {
           {topics.map(t => <ListItem onClick={() => null} topic={t} key={t.id} />)}
         </List>
         { loading ? (
-          <div>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
             <CircularProgress color="primary" size={100} />
           </div>
         ) : null}
