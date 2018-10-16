@@ -25,6 +25,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
+    "marked": "^0.5.0",
     "mobx": "^5.0.3",
     "mobx-react": "^5.2.3",
     "prop-types": "^15.6.2",
