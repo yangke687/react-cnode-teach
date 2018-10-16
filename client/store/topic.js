@@ -1,5 +1,6 @@
 import {
   observable,
+  computed,
   action,
   extendObservable,
   toJS,
@@ -22,9 +23,19 @@ class TopicStore {
 
   @observable loading
 
-  constructor({ loading, topics } = { loading: false, topics: [] }) {
+  @observable details
+
+  constructor({ loading, topics, details } = { loading: false, topics: [], details: [] }) {
     this.loading = loading
     this.topics = topics.map(topic => new Topic(createTopic(topic)))
+    this.details = details.map(d => new Topic(createTopic(d)))
+  }
+
+  @computed get detailsMap() {
+    return this.details.reduce((results, detail) => {
+      results[detail.id] = detail // eslint-disable-line
+      return results
+    }, {})
   }
 
   pushTopic = (topic) => {
@@ -50,6 +61,28 @@ class TopicStore {
       topics: toJS(this.topics),
       loading: toJS(this.loading),
     }
+  }
+
+  @action getTopicDetail(id) {
+    return new Promise((resolve, reject) => {
+      if (this.detailsMap[id]) {
+        resolve(this.detailsMap[id])
+      } else {
+        get(`/topic/${id}`, {
+          mdrender: false,
+        })
+          .then((res) => {
+            if (res.success) {
+              const topic = new Topic(createTopic(res.data))
+              this.details.push(topic)
+              resolve(topic)
+            } else {
+              reject()
+            }
+          })
+          .catch(reject)
+      }
+    })
   }
 }
 

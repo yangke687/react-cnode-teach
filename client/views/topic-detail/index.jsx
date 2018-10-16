@@ -17,14 +17,17 @@ import Reply from './reply'
 })) @observer
 class TopicDetail extends Component {
   componentDidMount() {
-    const { topicStore } = this.props
-    topicStore.fetchTopics('all')
+    const { topicStore, match } = this.props
+    const { params } = match
+    const { id } = params
+    topicStore.getTopicDetail(id)
   }
 
   render() {
-    const { topicStore, classes } = this.props
-    const { topics } = topicStore
-    const topic = topics.length ? topics[0] : null
+    const { topicStore, classes, match } = this.props
+    const { params } = match
+    const { id } = params
+    const topic = topicStore.detailsMap[id]
 
     if (!topic) {
       return (
@@ -75,8 +78,12 @@ class TopicDetail extends Component {
 }
 
 TopicDetail.wrappedComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   topicStore: PropTypes.instanceOf(TopicStore),
+}
+
+TopicDetail.propTypes = {
+  match: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
 }
 
 export default withStyles(topicDetailStyle)(TopicDetail)
