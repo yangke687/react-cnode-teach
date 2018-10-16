@@ -6,6 +6,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Avatar from '@material-ui/core/Avatar'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import dateFormat from 'dateformat'
 import { topicPrimaryStyle, topicSecondaryStyle } from './styles'
 import { tabs } from '../../util/variable-define'
 
@@ -50,7 +51,7 @@ const Secondary = ({ classes, topic }) => (
       </span>
     </div>
     <span>
-      {topic.create_at}
+      {dateFormat(topic.create_at, 'yy-mm-dd HH:mm')}
     </span>
   </span>
 )

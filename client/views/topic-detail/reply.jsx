@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Avatar from '@material-ui/core/Avatar';
 import { withStyles } from '@material-ui/core/styles'
 import marked from 'marked'
+import dateFormat from 'dateformat'
 import { replyStyle } from './styles'
 
 const Reply = ({ reply, classes }) => (
@@ -12,7 +13,7 @@ const Reply = ({ reply, classes }) => (
     </div>
     <div className={classes.right}>
       <span>
-        {`${reply.author.loginname} ${reply.created_at}`}
+        {`${reply.author.loginname} ${dateFormat(reply.created_at, 'yy-mm-dd HH:mm')}`}
       </span>
       <p dangerouslySetInnerHTML={{ __html: marked(reply.content) }} />
     </div>
