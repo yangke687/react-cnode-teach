@@ -89,7 +89,9 @@ export default class TopicList extends Component {
           }
         </Tabs>
         <List>
-          {topics.map(t => <ListItem onClick={() => null} topic={t} key={t.id} />)}
+          { // eslint-disable-next-line
+            topics.map(t => <ListItem onClick={() => this.context.router.history.push(`/detail/${t.id}`)} topic={t} key={t.id} />)
+          }
         </List>
         { loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
