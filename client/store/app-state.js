@@ -1,35 +1,36 @@
 import {
   observable,
-  computed,
+  // computed,
   action,
 } from 'mobx'
 
+import { post } from '../util/http'
+
 export default class AppState {
-  constructor({ count, name } = { count: 0, name: 'Ke Yang' }) {
-    this.count = count
-    this.name = name
+  @observable user = {
+    isLogin: false,
+    info: {},
   }
 
-  @observable count
-
-  @observable name
-
-  @computed get msg() {
-    return `${this.name} said: ${this.count}`
-  }
-
-  @action add() {
-    this.count += 1
-  }
-
-  @action changeName(name) {
-    this.name = name
+  @action login(accessToken) {
+    return new Promise((resolve, reject) => {
+      post('/api/user/login', {}, {
+        accessToken,
+      }).then((res) => {
+        if (res.success) {
+          this.user.info = res.data
+          this.user.isLogin = true
+          resolve()
+        } else {
+          reject(res)
+        }
+      }).catch(reject)
+    })
   }
 
   toJson() {
     return {
-      count: this.count,
-      name: this.name,
+      user: this.user,
     }
   }
 }

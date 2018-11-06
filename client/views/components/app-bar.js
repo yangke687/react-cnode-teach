@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+
+import { inject, observer } from 'mobx-react'
+
 import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import ToolBar from '@material-ui/core/Toolbar'
@@ -17,21 +20,49 @@ const styleSheet = {
   },
 }
 
+@inject(stores => ({
+  appState: stores.appState,
+}))
+@observer
 class ButtonAppBar extends Component {
+  static contextTypes = {
+    router: PropTypes.object,
+  }
+
   constructor(props) {
     super(props)
     this.state = {
 
     }
+    this.loginBtnClick = this.loginBtnClick.bind(this)
+    this.homeIconClick = this.homeIconClick.bind(this)
+  }
+
+  homeIconClick() {
+    const { router } = this.context
+    router.history.push('/list?tab=all')
+  }
+
+  loginBtnClick() {
+    const { router } = this.context
+    const { appState } = this.props
+    const { user } = appState
+
+    if (user.isLogin) {
+      router.history.push('/user/info')
+    } else {
+      router.history.push('/user/login')
+    }
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, appState } = this.props
+    const { user } = appState
     return (
       <div className={classes.root}>
         <AppBar position="fixed">
           <ToolBar>
-            <IconButton color="inherit" onClick={() => null}>
+            <IconButton color="inherit" onClick={this.homeIconClick}>
               <HomeIcon />
             </IconButton>
             <Typography type="title" color="inherit" className={classes.flex}>
@@ -40,8 +71,8 @@ class ButtonAppBar extends Component {
             <Button variant="raised" color="primary" onClick={() => null}>
               新建话题
             </Button>
-            <Button color="inherit" onClick={() => null}>
-              登录
+            <Button color="inherit" onClick={this.loginBtnClick}>
+              { user.isLogin ? user.info.loginname : '登录' }
             </Button>
           </ToolBar>
         </AppBar>
@@ -54,4 +85,8 @@ export default withStyles(styleSheet)(ButtonAppBar)
 
 ButtonAppBar.propTypes = {
   classes: PropTypes.object.isRequired,
+}
+
+ButtonAppBar.wrappedComponent.propTypes = {
+  appState: PropTypes.object.isRequired,
 }
