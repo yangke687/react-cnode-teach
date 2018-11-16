@@ -4,24 +4,31 @@ import Avatar from '@material-ui/core/Avatar'
 import { withStyles } from '@material-ui/core/styles'
 import UserIcon from '@material-ui/icons/AccountCircle'
 
+import { inject, observer } from 'mobx-react'
+
 import Container from '../components/container'
 import userStyles from './styles/user-style'
 
+@inject(stores => ({
+  user: stores.appState.user,
+}))
+@observer
 class User extends React.Component {
   componentDidMount() {
     // do something here
   }
 
   render() {
-    const { classes, children } = this.props
-    const user = {}
+    const { classes, children, user } = this.props
+    // const isLogin = user.isLogin
+    const userInfo = user.info
     return (
       <Container>
         <div className={classes.avatar}>
           <div className={classes.bg} />
           {
-            user.avatar_url
-              ? <Avatar className={classes.avatarImg} src={user.avatar_url} />
+            userInfo.avatar_url
+              ? <Avatar className={classes.avatarImg} src={userInfo.avatar_url} />
               : (
                 <Avatar className={classes.avatarImg}>
                   <UserIcon />
@@ -29,7 +36,7 @@ class User extends React.Component {
               )
           }
           <span className={classes.userName}>
-            {user.loginName || '未登录'}
+            {userInfo.loginname || '未登录'}
           </span>
         </div>
         {children}
@@ -38,9 +45,9 @@ class User extends React.Component {
   }
 }
 
-// User.wrappedComponent.propTypes = {
-//   user: PropTypes.object.isRequired,
-// }
+User.wrappedComponent.propTypes = {
+  user: PropTypes.object.isRequired,
+}
 
 User.propTypes = {
   classes: PropTypes.object.isRequired,
