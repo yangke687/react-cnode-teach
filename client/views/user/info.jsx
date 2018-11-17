@@ -9,12 +9,14 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 
+import { inject, observer } from 'mobx-react'
+
 import { withStyles } from '@material-ui/core/styles'
 import UserWrapper from './user'
 import infoStyles from './styles/user-info-style'
 
-const TopicItem = ({ topic }) => (
-  <ListItem>
+const TopicItem = ({ topic, onClick }) => (
+  <ListItem button onClick={onClick}>
     <Avatar src={topic.author.avatar_url} />
     <ListItemText
       primary={topic.title}
@@ -25,19 +27,45 @@ const TopicItem = ({ topic }) => (
 
 TopicItem.propTypes = {
   topic: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired,
 }
 
+@inject(stores => ({
+  appState: stores.appState,
+  user: stores.appState.user,
+}))
+@observer
 class UserInfo extends React.Component {
+  static contextTypes = {
+    router: PropTypes.object.isRequired,
+  }
+
   constructor() {
     super()
     this.state = {}
   }
 
+  componentDidMount() {
+    const { user, appState } = this.props
+    const { router } = this.context
+    if (!user.isLogin) {
+      router.history.replace('/user/login')
+    } else {
+      appState.getUserDetail()
+      appState.getCollections()
+    }
+  }
+
+  gotoItem(id) {
+    const { router } = this.context
+    router.history.push(`/detail/${id}`)
+  }
+
   render() {
-    const { classes } = this.props
-    const topics = []
-    const replies = []
-    const collections = []
+    const { classes, user } = this.props
+    const topics = user.detail.recentTopics
+    const replies = user.detail.recentReplies
+    const collections = user.collections.list
     return (
       <UserWrapper>
         <div className={classes.root}>
@@ -53,7 +81,13 @@ class UserInfo extends React.Component {
                 <List>
                   {
                     topics.length > 0
-                      ? topics.map(topic => <TopicItem topic={topic} key={topic.id} />)
+                      ? topics.map(topic => (
+                        <TopicItem
+                          onClick={() => this.gotoItem(topic.id)}
+                          topic={topic}
+                          key={topic.id}
+                        />
+                      ))
                       : (
                         <Typography align="center">
                           最近没有发布过话题
@@ -74,7 +108,13 @@ class UserInfo extends React.Component {
                 <List>
                   {
                     replies.length > 0
-                      ? replies.map(topic => <TopicItem topic={topic} key={topic.id} />)
+                      ? replies.map(topic => (
+                        <TopicItem
+                          onClick={() => { this.gotoItem(topic.id) }}
+                          topic={topic}
+                          key={topic.id}
+                        />
+                      ))
                       : (
                         <Typography align="center">
                           最近没有新的回复
@@ -95,10 +135,16 @@ class UserInfo extends React.Component {
                 <List>
                   {
                     collections.length > 0
-                      ? collections.map(topic => <TopicItem topic={topic} key={topic.id} />)
+                      ? collections.map(topic => (
+                        <TopicItem
+                          onClick={() => this.gotoItem(topic.id)}
+                          topic={topic}
+                          key={topic.id}
+                        />
+                      ))
                       : (
                         <Typography align="center">
-                          还么有收藏话题哦
+                          还没有收藏话题
                         </Typography>
                       )
                   }
@@ -112,16 +158,13 @@ class UserInfo extends React.Component {
   }
 }
 
-UserInfo.contextTypes = {
-  router: PropTypes.object.isRequired,
-}
-
 UserInfo.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-// UserInfo.wrappedComponent.propTypes = {
-//   appState: PropTypes.object.isRequired,
-// }
+UserInfo.wrappedComponent.propTypes = {
+  appState: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+}
 
 export default withStyles(infoStyles)(UserInfo)

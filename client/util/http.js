@@ -14,6 +14,7 @@ const parseUrl = (url, params) => {
 }
 
 export const get = (url, params) => new Promise((resolve, reject) => {
+  params = params || {} // eslint-disable-line
   axios(parseUrl(`${baseUrl}/api${url}`, params))
     .then((res) => {
       const { data } = res
