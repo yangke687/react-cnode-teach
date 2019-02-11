@@ -27,4 +27,17 @@ export const tabs = {
   dev: '测试',
 }
 
+export const replySchema = {
+  id: '',
+  author: {
+    loginname: '',
+    avatar_url: '',
+  },
+  content: '',
+  ups: [],
+  create_at: '',
+  reply_id: '',
+  is_uped: false,
+}
+
 export default { topicSchema, tabs }
