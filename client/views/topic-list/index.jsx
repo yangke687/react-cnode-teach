@@ -69,8 +69,10 @@ export default class TopicList extends Component {
 
   render() {
     const { appState, topicStore } = this.props
-    const { loading, topics } = topicStore
+    const { loading, topics, createdTopics } = topicStore
     const tab = this.getTab()
+
+    const { user } = appState
 
     return (
       <Container>
@@ -87,6 +89,12 @@ export default class TopicList extends Component {
             ))
           }
         </Tabs>
+        <List>
+          {
+            // eslint-disable-next-line
+            createdTopics.map(t => <ListItem onClick={() => this.context.router.history.push(`/detail/${t.id}`)} topic={Object.assign({}, t, { author: user.info })} key={t.id} />)
+          }
+        </List>
         <List>
           { // eslint-disable-next-line
             topics.map(t => <ListItem onClick={() => this.context.router.history.push(`/detail/${t.id}`)} topic={t} key={t.id} />)

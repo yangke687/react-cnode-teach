@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
+import Snackbar from '@material-ui/core/Snackbar'
 import { inject, observer } from 'mobx-react';
 import { withStyles } from '@material-ui/core/styles'
 import Radio from '@material-ui/core/Radio'
@@ -18,13 +19,24 @@ import SimpleMDE from '../../components/simple-mde/index'
   appState: stores.appState,
 })) @observer
 class TopicCreate extends Component {
+  static contextTypes = {
+    router: PropTypes.object,
+  }
+
   constructor() {
     super()
     this.state = {
       title: '',
       content: '',
       tab: 'dev',
+      // err
+      message: null,
+      open: false,
     }
+  }
+
+  handleClose = () => {
+    this.setState({ open: false })
   }
 
   handleTitleChange = (e) => {
@@ -44,14 +56,49 @@ class TopicCreate extends Component {
   }
 
   handleCreate = () => {
-
+    const { topicStore } = this.props
+    const { title, content, tab } = this.state
+    const { router } = this.context
+    if (!title) {
+      this.setState({
+        message: '标题不能为空',
+        open: true,
+      })
+      return false
+    }
+    if (!content) {
+      this.setState({
+        message: '内容不能为空',
+        open: true,
+      })
+      return false
+    }
+    return topicStore.createTopic(title, tab, content)
+      .then(() => {
+        router.history.push('/list')
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   }
 
   render() {
     const { classes } = this.props
-    const { title, content } = this.state
+    const {
+      title, content, message, open,
+    } = this.state
+
     return (
       <Container>
+        <Snackbar
+          anchorOrigin={{
+            horizontal: 'center',
+            vertical: 'top',
+          }}
+          message={message}
+          open={open}
+          onClose={this.handleClose}
+        />
         <div className={classes.root}>
           <TextField
             className={classes.title}
@@ -98,6 +145,11 @@ class TopicCreate extends Component {
       </Container>
     )
   }
+}
+
+TopicCreate.wrappedComponent.propTypes = {
+  topicStore: PropTypes.object.isRequired,
+  // appState: PropTypes.object.isRequired,
 }
 
 TopicCreate.propTypes = {

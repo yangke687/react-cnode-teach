@@ -36,6 +36,7 @@ class ButtonAppBar extends Component {
     }
     this.loginBtnClick = this.loginBtnClick.bind(this)
     this.homeIconClick = this.homeIconClick.bind(this)
+    this.createBtnClick = this.createBtnClick.bind(this)
   }
 
   homeIconClick() {
@@ -55,6 +56,11 @@ class ButtonAppBar extends Component {
     }
   }
 
+  createBtnClick() {
+    const { router } = this.context
+    router.history.push('/topic/create')
+  }
+
   render() {
     const { classes, appState } = this.props
     const { user } = appState
@@ -68,7 +74,7 @@ class ButtonAppBar extends Component {
             <Typography type="title" color="inherit" className={classes.flex}>
               JNode
             </Typography>
-            <Button variant="raised" color="primary" onClick={() => null}>
+            <Button variant="raised" color="primary" onClick={this.createBtnClick}>
               新建话题
             </Button>
             <Button color="inherit" onClick={this.loginBtnClick}>

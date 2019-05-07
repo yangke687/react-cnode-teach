@@ -48,6 +48,8 @@ class TopicStore {
 
   @observable details
 
+  @observable createdTopics = []
+
   constructor({ loading, topics, details } = { loading: false, topics: [], details: [] }) {
     this.loading = loading
     this.topics = topics.map(topic => new Topic(createTopic(topic)))
@@ -105,6 +107,44 @@ class TopicStore {
           })
           .catch(reject)
       }
+    })
+  }
+
+  @action createTopic(title, tab, content) {
+    // return new Promise((resolve, reject) => {
+    //   post('/api/topics', {
+    //     needAccessToken: true,
+    //   }, {
+    //     title, tab, content,
+    //   }).then((res) => {
+    //     if (res.success) {
+    //       const topic = {
+    //         title,
+    //         tab,
+    //         content,
+    //         id: res.topic_id,
+    //         create_at: Date.now(),
+    //       }
+    //       this.createdTopics.push(new Topic(createTopic(topic)))
+    //       resolve()
+    //     } else {
+    //       reject()
+    //     }
+    //   }).catch(reject)
+    // })
+    // POST /topics api 下线
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const topic = {
+          title,
+          tab,
+          content,
+          id: Date.now().toString(),
+          create_at: Date.now(),
+        }
+        this.createdTopics.push(new Topic(createTopic(topic)))
+        resolve()
+      }, 1000)
     })
   }
 }
